@@ -57,6 +57,7 @@ import { useSnackbar } from "notistack";
 import { useQuery, useQueryClient } from "react-query";
 import { QK } from "../../base/qk";
 import { getOrders } from "../../api/services/order";
+import OrderActionModal from "./Action/OrderActionModal";
 
 const sampleOrders = [
   {
@@ -120,6 +121,8 @@ const getStatusColor = (status) => {
 
 const OrderListTab = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [orderActionModalOpen, setOrderActionModalOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const orderPerPage = 10;
 
@@ -136,6 +139,12 @@ const OrderListTab = () => {
   const totalPages = Math.ceil(totalRecords / orderPerPage);
   const handlePageChange = (event, page) => setCurrentPage(page);
   console.log(orders);
+
+  const handleOrderAction = (order) => {
+    setSelectedOrder(order);
+    setOrderActionModalOpen(true);
+  };
+
   return (
     <Box sx={{ mt: 4 }}>
       <Paper
@@ -298,8 +307,11 @@ const OrderListTab = () => {
                       )}
                     </TableCell>
                     <TableCell align="right">
-                      <Tooltip title="Update Delivery Status">
-                        <IconButton color="primary">
+                      <Tooltip title="Order Actions">
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleOrderAction(order)}
+                        >
                           <CheckCircleOutline />
                         </IconButton>
                       </Tooltip>
@@ -310,6 +322,11 @@ const OrderListTab = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        <OrderActionModal
+          open={orderActionModalOpen}
+          order={selectedOrder}
+          handleClose={() => setOrderActionModalOpen(false)}
+        />
 
         <Box display="flex" justifyContent="center" mt={3}>
           <Pagination

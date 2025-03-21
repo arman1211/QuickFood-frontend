@@ -27,7 +27,7 @@ export const updateOrder = async (orderId, formData) => {
 // Partially update an order
 export const patchOrder = async (orderId, formData) => {
   const response = await apiClient.patch(`/orders/${orderId}/`, formData);
-  return response.data;
+  return response;
 };
 
 // Delete an order
