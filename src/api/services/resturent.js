@@ -1,4 +1,5 @@
 import { apiClient } from "../../base/ApiClient";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 // Get all restaurants
 export const getRestaurants = async () => {
@@ -8,8 +9,12 @@ export const getRestaurants = async () => {
 
 // Create a new restaurant
 export const createRestaurant = async (formData) => {
-  const response = await apiClient.post("/restaurants/", formData);
-  return response.data;
+  const response = await apiClient.post("/restaurants/", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response;
 };
 
 // Get a specific restaurant

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Box,
@@ -23,10 +23,14 @@ import { useQueryClient } from "react-query";
 import { QK } from "../../../base/qk";
 
 const OrderActionModal = ({ open, handleClose, order }) => {
-  const [status, setStatus] = useState(order?.status || "preparing");
+  const [status, setStatus] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setStatus(order?.status);
+  }, [order]);
 
   // All possible order statuses
   const orderStatuses = [

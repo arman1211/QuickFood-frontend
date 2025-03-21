@@ -1,204 +1,226 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
-  AppBar,
-  Toolbar,
   Typography,
-  Tabs,
-  Tab,
   Paper,
   Grid,
   Card,
   CardContent,
-  CardHeader,
-  Avatar,
   Button,
   TextField,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
-  Tooltip,
-  Badge,
-  Container,
 } from "@mui/material";
+import { CloudUploadOutlined, LocationCity, Store } from "@mui/icons-material";
+import { createRestaurant } from "../../api/services/resturent";
+import { useSnackbar } from "notistack";
+import { useQueryClient } from "react-query";
 
-import {
-  RestaurantMenu,
-  Fastfood,
-  ListAlt,
-  Search,
-  Add,
-  CloudUpload,
-  Dashboard as DashboardIcon,
-  Store as StoreIcon,
-  LocationOn,
-} from "@mui/icons-material";
+const AddRestaurant = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    location: "",
+    image: null,
+  });
+  const { enqueueSnackbar } = useSnackbar();
+  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-const AddRestaurant = () => (
-  <Box sx={{ mt: 4 }}>
-    <Paper
-      sx={{ p: 4, borderRadius: 2, boxShadow: "0 8px 24px rgba(0,0,0,0.12)" }}
-    >
-      <Typography variant="h5" fontWeight="bold" mb={4}>
-        Add New Restaurant
-      </Typography>
+  const [imagePreview, setImagePreview] = useState(null);
 
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <Card variant="outlined" sx={{ mb: 3, height: "100%" }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography
-                variant="h6"
-                mb={3}
-                sx={{ display: "flex", alignItems: "center" }}
-              >
-                <StoreIcon color="primary" sx={{ mr: 1 }} />
-                Restaurant Details
-              </Typography>
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Restaurant Name"
-                    variant="outlined"
-                    placeholder="e.g. Italiano Delight"
-                  />
-                </Grid>
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedImage = e.target.files[0];
+      setFormData({
+        ...formData,
+        image: selectedImage,
+      });
 
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Description"
-                    variant="outlined"
-                    multiline
-                    rows={3}
-                    placeholder="Describe your restaurant"
-                  />
-                </Grid>
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setImagePreview(event.target.result);
+      };
+      reader.readAsDataURL(selectedImage);
+    }
+  };
 
-                <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth>
-                    <InputLabel>Cuisine Type</InputLabel>
-                    <Select label="Cuisine Type">
-                      <MenuItem value="italian">Italian</MenuItem>
-                      <MenuItem value="indian">Indian</MenuItem>
-                      <MenuItem value="japanese">Japanese</MenuItem>
-                      <MenuItem value="chinese">Chinese</MenuItem>
-                      <MenuItem value="thai">Thai</MenuItem>
-                      <MenuItem value="american">American</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    const response = await createRestaurant(formData);
+    if (response.status === 201) {
+      enqueueSnackbar("Restaurant added successfully", { variant: "success" });
+      queryClient.invalidateQueries("restaurants");
+      setIsLoading(false);
+    } else {
+      enqueueSnackbar("Failed to add restaurant", { variant: "error" });
+      setIsLoading(false);
+    }
+  };
 
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Price Range"
-                    variant="outlined"
-                    placeholder="e.g. $$$"
-                  />
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
+  return (
+    <Box sx={{ mt: 4 }}>
+      <Paper
+        sx={{ p: 4, borderRadius: 2, boxShadow: "0 8px 24px rgba(0,0,0,0.12)" }}
+      >
+        <Typography variant="h5" fontWeight="bold" mb={4}>
+          Add New Restaurant
+        </Typography>
 
-        <Grid item xs={12} md={6}>
-          <Card variant="outlined" sx={{ mb: 3, height: "100%" }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography
-                variant="h6"
-                mb={3}
-                sx={{ display: "flex", alignItems: "center" }}
-              >
-                <LocationOn color="primary" sx={{ mr: 1 }} />
-                Location & Contact
-              </Typography>
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={6}>
+              <Card variant="outlined" sx={{ mb: 3, height: "100%" }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Typography
+                    variant="h6"
+                    mb={3}
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    <Store color="primary" sx={{ mr: 1 }} />
+                    Restaurant Details
+                  </Typography>
 
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    label="Address"
-                    variant="outlined"
-                    placeholder="Full address"
-                  />
-                </Grid>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Restaurant Name"
+                        variant="outlined"
+                        placeholder="e.g. Italiano Delight"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                      />
+                    </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <TextField fullWidth label="City" variant="outlined" />
-                </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Description"
+                        variant="outlined"
+                        multiline
+                        rows={3}
+                        placeholder="Describe your restaurant"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <TextField fullWidth label="Postal Code" variant="outlined" />
-                </Grid>
+            <Grid item xs={12} md={6}>
+              <Card variant="outlined" sx={{ mb: 3, height: "100%" }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Typography
+                    variant="h6"
+                    mb={3}
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    <LocationCity color="primary" sx={{ mr: 1 }} />
+                    Location
+                  </Typography>
 
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label="Phone Number"
-                    variant="outlined"
-                  />
-                </Grid>
+                  <Grid container spacing={3}>
+                    <Grid item xs={12}>
+                      <TextField
+                        fullWidth
+                        label="Location"
+                        variant="outlined"
+                        placeholder="Full address"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        required
+                      />
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            </Grid>
 
-                <Grid item xs={12} sm={6}>
-                  <TextField fullWidth label="Email" variant="outlined" />
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
+            <Grid item xs={12}>
+              <Card variant="outlined" sx={{ mb: 3 }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Typography
+                    variant="h6"
+                    mb={3}
+                    sx={{ display: "flex", alignItems: "center" }}
+                  >
+                    <CloudUploadOutlined color="primary" sx={{ mr: 1 }} />
+                    Restaurant Image
+                  </Typography>
 
-        <Grid item xs={12}>
-          <Card variant="outlined" sx={{ mb: 3 }}>
-            <CardContent sx={{ p: 3 }}>
-              <Typography
-                variant="h6"
-                mb={3}
-                sx={{ display: "flex", alignItems: "center" }}
-              >
-                <CloudUpload color="primary" sx={{ mr: 1 }} />
-                Restaurant Images
-              </Typography>
+                  {imagePreview && (
+                    <Box sx={{ mb: 2, textAlign: "center" }}>
+                      <img
+                        src={imagePreview}
+                        alt="Restaurant preview"
+                        style={{ maxHeight: "200px", maxWidth: "100%" }}
+                      />
+                    </Box>
+                  )}
 
-              <Box
-                sx={{
-                  border: "2px dashed #ccc",
-                  p: 5,
-                  borderRadius: 2,
-                  textAlign: "center",
-                  backgroundColor: "rgba(0, 0, 0, 0.02)",
-                }}
-              >
-                <Button
-                  variant="contained"
-                  startIcon={<CloudUpload />}
-                  sx={{ mb: 2 }}
-                >
-                  Upload Restaurant Images
-                </Button>
-                <Typography variant="body2" color="text.secondary">
-                  Drag and drop images or click to browse. Max size: 5MB per
-                  image.
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+                  <Box
+                    sx={{
+                      border: "2px dashed #ccc",
+                      p: 5,
+                      borderRadius: 2,
+                      textAlign: "center",
+                      backgroundColor: "rgba(0, 0, 0, 0.02)",
+                    }}
+                  >
+                    <input
+                      accept="image/*"
+                      id="restaurant-image-upload"
+                      type="file"
+                      style={{ display: "none" }}
+                      onChange={handleImageChange}
+                    />
+                    <label htmlFor="restaurant-image-upload">
+                      <Button
+                        variant="contained"
+                        component="span"
+                        startIcon={<CloudUploadOutlined />}
+                        sx={{ mb: 2 }}
+                      >
+                        Upload Restaurant Image
+                      </Button>
+                    </label>
+                    <Typography variant="body2" color="text.secondary">
+                      Drag and drop an image or click to browse. Max size: 5MB.
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
 
-      <Box sx={{ mt: 4, display: "flex", justifyContent: "flex-end", gap: 2 }}>
-        <Button variant="outlined" size="large">
-          Cancel
-        </Button>
-        <Button variant="contained" size="large" startIcon={<Add />}>
-          Add Restaurant
-        </Button>
-      </Box>
-    </Paper>
-  </Box>
-);
+          <Box
+            sx={{ mt: 4, display: "flex", justifyContent: "flex-end", gap: 2 }}
+          >
+            <Button variant="outlined" size="large" type="button">
+              Cancel
+            </Button>
+            <Button variant="contained" size="large" type="submit">
+              {!isLoading ? "Add Restaurant" : "Adding..."}
+            </Button>
+          </Box>
+        </form>
+      </Paper>
+    </Box>
+  );
+};
 
 export default AddRestaurant;
