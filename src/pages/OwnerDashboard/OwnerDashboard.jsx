@@ -10,6 +10,7 @@ import {
 import AddRestaurant from "../../components/Dashboard/AddRestaurant";
 import OrderListTab from "../../components/Dashboard/OrderListTab";
 import AddFoodTab from "../../components/Dashboard/AddFoodTab";
+import RestaurantLists from "../../components/Dashboard/RestaurantLists";
 
 const OwnerDashboard = () => {
   // State for managing active tab
@@ -51,13 +52,17 @@ const OwnerDashboard = () => {
               label="Add Restaurant"
             />
             <Tab icon={<Fastfood />} iconPosition="start" label="Add Food" />
-            <Tab icon={<ListAlt />} iconPosition="start" label="Order List" />
+            <Tab
+              icon={<ListAlt />}
+              iconPosition="start"
+              label="Restaurant List"
+            />
           </Tabs>
 
           {activeTab === 0 && <OrderListTab />}
           {activeTab === 1 && <AddRestaurant />}
           {activeTab === 2 && <AddFoodTab />}
-          {activeTab === 3 && <OrderListTab />}
+          {activeTab === 3 && <RestaurantLists />}
         </Box>
       </Container>
     </Box>

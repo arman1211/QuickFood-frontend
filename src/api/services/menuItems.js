@@ -8,8 +8,12 @@ export const getMenuItems = async () => {
 
 // Create a new menu item
 export const createMenuItem = async (formData) => {
-  const response = await apiClient.post("/menu-items/", formData);
-  return response.data;
+  const response = await apiClient.post("/menu-items/", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response;
 };
 
 // Get a specific menu item
