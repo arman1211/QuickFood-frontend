@@ -51,7 +51,6 @@ const OwnerDashboard = () => {
               iconPosition="start"
               label="Add Restaurant"
             />
-            <Tab icon={<Fastfood />} iconPosition="start" label="Add Food" />
             <Tab
               icon={<ListAlt />}
               iconPosition="start"
@@ -61,7 +60,7 @@ const OwnerDashboard = () => {
 
           {activeTab === 0 && <OrderListTab />}
           {activeTab === 1 && <AddRestaurant />}
-          {activeTab === 3 && <RestaurantLists />}
+          {activeTab === 2 && <RestaurantLists setActiveTab={setActiveTab} />}
         </Box>
       </Container>
     </Box>

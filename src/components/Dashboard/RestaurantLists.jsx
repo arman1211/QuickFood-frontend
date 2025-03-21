@@ -34,7 +34,7 @@ import { QK } from "../../base/qk";
 import { getRestaurants } from "../../api/services/resturent";
 import AddFoodModal from "./Action/AddFoodModal";
 
-const RestaurantLists = () => {
+const RestaurantLists = ({ setActiveTab }) => {
   const navigate = useNavigate();
   const [openAddFoodModal, setOpenAddFoodModal] = useState(false);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
@@ -118,7 +118,7 @@ const RestaurantLists = () => {
           <Button
             variant="contained"
             component={Link}
-            to="/add-restaurant"
+            onClick={() => setActiveTab(1)}
             startIcon={<AddIcon />}
           >
             Add Restaurant
