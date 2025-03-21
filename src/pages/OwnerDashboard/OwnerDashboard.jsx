@@ -61,7 +61,6 @@ const OwnerDashboard = () => {
 
           {activeTab === 0 && <OrderListTab />}
           {activeTab === 1 && <AddRestaurant />}
-          {activeTab === 2 && <AddFoodTab />}
           {activeTab === 3 && <RestaurantLists />}
         </Box>
       </Container>
