@@ -10,6 +10,7 @@ const PlaceOrder = () => {
   const { getTotalCartAmount, cartItems, getTotalQuantity } =
     useContext(StoreContext);
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   // State to store delivery information
@@ -23,6 +24,7 @@ const PlaceOrder = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevents page reload
+    setIsLoading(true);
 
     const orderData = {
       user_details: formData,
@@ -41,14 +43,15 @@ const PlaceOrder = () => {
         variant: "success",
       });
       localStorage.removeItem("cartItems");
+      setIsLoading(false);
+      navigate("/");
     } else {
       enqueueSnackbar(
         "Something went wrong. Please Check your data or try again later",
         { variant: "error" }
       );
+      setIsLoading(false);
     }
-
-    // You can later send this data to the backend via API
   };
 
   return (
@@ -165,7 +168,7 @@ const PlaceOrder = () => {
               </div>
             </div>
             <button type="submit" disabled={getTotalCartAmount() === 0}>
-              PROCEED TO Payment
+              {isLoading ? "Placing Order..." : "Place Order"}
             </button>
           </div>
         </div>

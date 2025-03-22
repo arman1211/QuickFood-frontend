@@ -83,9 +83,9 @@ const OrderProfile = () => {
         return "warning";
       case "delivered":
         return "success";
-      case "cancelled":
+      case "canceled":
         return "error";
-      case "shipping":
+      case "out_for_delivery":
         return "info";
       default:
         return "default";
